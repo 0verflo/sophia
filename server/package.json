@@ -1,0 +1,27 @@
+{
+  "name": "chatbot-lait-maternel-admin",
+  "version": "1.0.0",
+  "description": "Serveur d'administration pour le chatbot lait maternel",
+  "main": "serveur-admin.js",
+  "scripts": {
+    "start": "node serveur-admin.js",
+    "dev": "nodemon serveur-admin.js",
+    "install-deps": "npm install express cors node-cron"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "keywords": [
+    "chatbot",
+    "administration",
+    "healthcare",
+    "baby-formula"
+  ],
+  "author": "Votre nom",
+  "license": "MIT"
+}

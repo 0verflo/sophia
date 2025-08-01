@@ -1,0 +1,832 @@
+<div v-if="recommendedProducts.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                                <div
+                                    v-for="product in recommendedProducts"
+                                    :key="product.id"
+                                    @click="showProductDetails(product)"
+                                    class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-pink-100 p-6 cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                                >
+                                    <div class="text-center mb-4">
+                                        <div class="text-4xl mb-2">{{ product.image || '📦' }}</div>
+                                        <h3 class="font-bold text-gray-800 mb-1">{{ product.nom || product.name || 'Produit' }}</h3>
+                                        <p class="text-sm text-gray-600 mb-2">{{ product.informations_generales?.presentation || product.category || 'Lait infantile' }}</p>
+                                    </div>
+                                    
+                                    <p class="text-sm text-gray-600 mb-4">{{ 
+                                        (product.informations_generales?.indications || product.description || 'Lait infantile adapté aux besoins de votre bébé').substring(0, 100) + '...'
+                                    }}</p>
+                                    
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-green-600">{{ 
+                                            product.informations_generales?.fabricant || product.price || 'Voir détails'
+                                        }}</span>
+                                        <span class="text-pink-500 text-sm">Voir détails →</span>
+                                    </div>
+                                </div>
+                            </div>                // Base de données JSON des questions et produits
+                const loadDatabase = async () => {
+                    try {
+                        isLoading.value = true;
+                        loadError.value = null;
+                        
+                        // Essayer de charger depuis le serveur local d'abord
+                        let response<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Lait Maternel - Assistant Personnel</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-pink': '#fdf2f8',
+                        'warm-pink': '#fce7f3',
+                        'gentle-blue': '#eff6ff',
+                        'calm-purple': '#f3e8ff'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-soft-pink to-gentle-blue min-h-screen">
+    <div id="app"></div>
+
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                // État de l'application
+                const currentStep = ref('welcome');
+                const currentQuestionId = ref(null);
+                const userAnswers = ref({});
+                const userPath = ref([]);
+                const showProductOverlay = ref(false);
+                const selectedProduct = ref(null);
+                const interactions = ref([]);
+                
+                // Timer de réinitialisation
+                const inactivityTimer = ref(null);
+                const warningTimer = ref(null);
+                const showInactivityWarning = ref(false);
+                const countdown = ref(15);
+                const countdownInterval = ref(null);
+
+                // Base de données chargée dynamiquement
+                const database = ref({
+                    questions: {},
+                    products: []
+                });
+                const isLoading = ref(true);
+                const loadError = ref(null);
+
+                // Base de données JSON des questions et produits
+                const loadDatabase = async (forceServer = false) => {
+                    try {
+                        isLoading.value = true;
+                        loadError.value = null;
+                        
+                        let response;
+                        let dataSource = 'unknown';
+                        
+                        if (forceServer) {
+                            // Forcer le chargement depuis le serveur
+                            console.log('Chargement forcé depuis le serveur...');
+                            response = await fetch('http://localhost:3001/database.json?t=' + Date.now());
+                            dataSource = 'serveur_force';
+                        } else {
+                            // Essayer de charger depuis le fichier local d'abord
+                            try {
+                                console.log('Tentative de chargement depuis le fichier local...');
+                                response = await fetch('./database.json?t=' + Date.now());
+                                if (response.ok) {
+                                    dataSource = 'fichier_local';
+                                    console.log('✅ Chargement depuis le fichier local réussi');
+                                } else {
+                                    throw new Error('Fichier local non accessible');
+                                }
+                            } catch (localError) {
+                                console.log('❌ Fichier local non disponible, tentative serveur...');
+                                // Fallback vers le serveur d'administration
+                                response = await fetch('http://localhost:3001/database.json?t=' + Date.now());
+                                dataSource = 'serveur_fallback';
+                                console.log('✅ Chargement depuis le serveur (fallback) réussi');
+                            }
+                        }
+                        
+                        if (!response.ok) {
+                            throw new Error(`Erreur HTTP: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        // Valider la structure des données
+                        if (!data.questions || !data.products) {
+                            throw new Error('Structure de données invalide');
+                        }
+                        
+                        database.value = data;
+                        console.log('Base de données chargée depuis:', dataSource, {
+                            version: data.version,
+                            lastUpdated: data.lastUpdated,
+                            questionsCount: Object.keys(data.questions).length,
+                            productsCount: data.products.length
+                        });
+                        
+                        trackInteraction('database_loaded', { 
+                            version: data.version,
+                            lastUpdated: data.lastUpdated,
+                            source: dataSource,
+                            forced: forceServer
+                        });
+                        
+                    } catch (error) {
+                        console.error('Erreur de chargement de la base de données:', error);
+                        loadError.value = error.message;
+                        
+                        // Données de fallback en cas d'erreur
+                        database.value = {
+                            version: '1.0.0-fallback',
+                            lastUpdated: new Date().toISOString(),
+                            questions: {
+                                'q1': {
+                                    id: 'q1',
+                                    title: 'Âge de votre bébé',
+                                    question: 'Quel âge a votre bébé ?',
+                                    options: [
+                                        { value: '0-6months', label: '0-6 mois', next: 'q2' },
+                                        { value: '6-12months', label: '6-12 mois', next: 'q3' },
+                                        { value: '12+months', label: '12+ mois', next: 'q4' }
+                                    ]
+                                },
+                                'q2': {
+                                    id: 'q2',
+                                    title: 'Besoins spécifiques (0-6 mois)',
+                                    question: 'Votre bébé a-t-il des besoins particuliers ?',
+                                    options: [
+                                        { value: 'normal', label: 'Développement normal', next: 'results' }
+                                    ]
+                                }
+                            },
+                            products: [
+                                {
+                                    id: 'fallback-product',
+                                    name: 'Produit de base',
+                                    category: 'Lait infantile',
+                                    age: '0-12 mois',
+                                    description: 'Produit de fallback',
+                                    features: ['Formule de base'],
+                                    indications: ['normal'],
+                                    price: 'Prix à consulter',
+                                    image: '🍼',
+                                    details: 'Veuillez consulter un professionnel de santé.'
+                                }
+                            ]
+                        };
+                        
+                        trackInteraction('database_fallback', { error: error.message });
+                    } finally {
+                        isLoading.value = false;
+                    }
+                };
+
+                // Fonction pour vérifier les mises à jour depuis le serveur
+                const checkForUpdates = async () => {
+                    try {
+                        console.log('Vérification des mises à jour depuis le serveur...');
+                        const response = await fetch('http://localhost:3001/api/status');
+                        const serverStatus = await response.json();
+                        
+                        // Comparer les timestamps lastUpdated
+                        const serverTimestamp = new Date(serverStatus.lastUpdated || '1970-01-01T00:00:00.000Z').getTime();
+                        const localTimestamp = new Date(database.value.lastUpdated || '1970-01-01T00:00:00.000Z').getTime();
+                        
+                        if (serverTimestamp > localTimestamp) {
+                            console.log('🔄 Nouvelle version détectée sur le serveur:', {
+                                server: serverStatus.lastUpdated,
+                                local: database.value.lastUpdated
+                            });
+                            return true;
+                        }
+                        
+                        console.log('✅ Base locale à jour');
+                        return false;
+                    } catch (error) {
+                        console.log('⚠️ Impossible de vérifier les mises à jour:', error.message);
+                        return false;
+                    }
+                };
+
+                // Fonctions utilitaires
+                const trackInteraction = (action, data = {}) => {
+                    const interaction = {
+                        timestamp: new Date().toISOString(),
+                        action,
+                        data,
+                        step: currentStep.value,
+                        questionId: currentQuestionId.value
+                    };
+                    interactions.value.push(interaction);
+                    console.log('Interaction tracked:', interaction);
+                    
+                    // Réinitialiser le timer d'inactivité uniquement pour certaines actions
+                    const actionsToResetTimer = [
+                        'product_clicked', 
+                        'session_extended', 
+                        'product_overlay_closed'
+                    ];
+                    
+                    if (currentStep.value === 'results' && actionsToResetTimer.includes(action)) {
+                        console.log('Resetting timer due to user interaction:', action);
+                        resetInactivityTimer();
+                    }
+                };
+
+                const startInactivityTimer = () => {
+                    // Nettoyer les timers existants
+                    clearInactivityTimers();
+                    
+                    console.log('Starting inactivity timer');
+                    
+                    // Timer d'avertissement (45 secondes)
+                    warningTimer.value = setTimeout(() => {
+                        console.log('Showing inactivity warning');
+                        showInactivityWarning.value = true;
+                        countdown.value = 15;
+                        startCountdown();
+                        // Ne pas tracker cette action car elle ne doit pas réinitialiser le timer
+                        console.log('Inactivity warning shown');
+                    }, 45000);
+                    
+                    // Timer de réinitialisation (60 secondes)
+                    inactivityTimer.value = setTimeout(() => {
+                        console.log('Auto-restarting due to inactivity');
+                        autoRestart();
+                    }, 60000);
+                };
+
+                const resetInactivityTimer = () => {
+                    if (currentStep.value === 'results') {
+                        clearInactivityTimers();
+                        hideInactivityWarning();
+                        startInactivityTimer();
+                    }
+                };
+
+                const clearInactivityTimers = () => {
+                    if (inactivityTimer.value) {
+                        clearTimeout(inactivityTimer.value);
+                        inactivityTimer.value = null;
+                    }
+                    if (warningTimer.value) {
+                        clearTimeout(warningTimer.value);
+                        warningTimer.value = null;
+                    }
+                    if (countdownInterval.value) {
+                        clearInterval(countdownInterval.value);
+                        countdownInterval.value = null;
+                    }
+                };
+
+                const startCountdown = () => {
+                    console.log('Starting countdown from:', countdown.value);
+                    countdownInterval.value = setInterval(() => {
+                        countdown.value--;
+                        console.log('Countdown:', countdown.value);
+                        if (countdown.value <= 0) {
+                            console.log('Countdown finished, auto-restarting');
+                            clearInterval(countdownInterval.value);
+                            autoRestart();
+                        }
+                    }, 1000);
+                };
+
+                const extendSession = () => {
+                    hideInactivityWarning();
+                    trackInteraction('session_extended');
+                    // Le timer sera réinitialisé par trackInteraction
+                };
+
+                const hideInactivityWarning = () => {
+                    showInactivityWarning.value = false;
+                    if (countdownInterval.value) {
+                        clearInterval(countdownInterval.value);
+                        countdownInterval.value = null;
+                    }
+                };
+
+                const autoRestart = () => {
+                    trackInteraction('auto_restart_due_to_inactivity');
+                    clearInactivityTimers();
+                    hideInactivityWarning();
+                    restart();
+                };
+
+                const startQuestionnaire = () => {
+                    currentStep.value = 'questionnaire';
+                    currentQuestionId.value = 'q1';
+                    userPath.value = ['q1'];
+                    trackInteraction('questionnaire_started');
+                };
+
+                const answerQuestion = (questionId, answer) => {
+                    userAnswers.value[questionId] = answer;
+                    trackInteraction('question_answered', { 
+                        questionId, 
+                        answer: answer.value,
+                        label: answer.label 
+                    });
+
+                    if (answer.next === 'results') {
+                        showResults();
+                    } else {
+                        navigateToQuestion(answer.next);
+                    }
+                };
+
+                const navigateToQuestion = (questionId) => {
+                    currentQuestionId.value = questionId;
+                    if (!userPath.value.includes(questionId)) {
+                        userPath.value.push(questionId);
+                    }
+                    trackInteraction('question_navigated', { questionId });
+                };
+
+                const goToStep = (stepId) => {
+                    if (userPath.value.includes(stepId)) {
+                        currentQuestionId.value = stepId;
+                        // Nettoyer les réponses postérieures
+                        const stepIndex = userPath.value.indexOf(stepId);
+                        const questionsToRemove = userPath.value.slice(stepIndex + 1);
+                        questionsToRemove.forEach(qId => {
+                            delete userAnswers.value[qId];
+                        });
+                        userPath.value = userPath.value.slice(0, stepIndex + 1);
+                        trackInteraction('breadcrumb_clicked', { stepId });
+                    }
+                };
+
+                const showResults = () => {
+                    currentStep.value = 'results';
+                    trackInteraction('results_shown', { userAnswers: userAnswers.value });
+                    // Démarrer le timer d'inactivité
+                    startInactivityTimer();
+                };
+
+                const showProductDetails = (product) => {
+                    selectedProduct.value = product;
+                    showProductOverlay.value = true;
+                    trackInteraction('product_clicked', { productId: product.id });
+                };
+
+                const closeProductOverlay = () => {
+                    showProductOverlay.value = false;
+                    selectedProduct.value = null;
+                    trackInteraction('product_overlay_closed');
+                };
+
+                const restart = () => {
+                    // Nettoyer tous les timers
+                    clearInactivityTimers();
+                    hideInactivityWarning();
+                    
+                    currentStep.value = 'welcome';
+                    currentQuestionId.value = null;
+                    userAnswers.value = {};
+                    userPath.value = [];
+                    trackInteraction('questionnaire_restarted');
+                };
+
+                // Propriétés calculées
+                const currentQuestion = computed(() => {
+                    if (!currentQuestionId.value) return null;
+                    return database.value.questions[currentQuestionId.value];
+                });
+
+                const breadcrumbPath = computed(() => {
+                    return userPath.value.map(qId => ({
+                        id: qId,
+                        title: database.value.questions[qId]?.title || 'Question',
+                        isActive: qId === currentQuestionId.value
+                    }));
+                });
+
+                const recommendedProducts = computed(() => {
+                    const answers = Object.values(userAnswers.value);
+                    const answerValues = answers.map(a => a.value);
+                    
+                    return database.value.products.filter(product => {
+                        // Utiliser la nouvelle structure "categorisation" au lieu d'"indications"
+                        if (!product.categorisation || !Array.isArray(product.categorisation)) {
+                            // Compatibilité avec l'ancienne structure "indications"
+                            if (product.indications && Array.isArray(product.indications)) {
+                                return product.indications.some(indication => 
+                                    answerValues.includes(indication)
+                                );
+                            }
+                            return false;
+                        }
+                        
+                        return product.categorisation.some(category => 
+                            answerValues.includes(category)
+                        );
+                    }).slice(0, 3); // Limiter à 3 produits
+                });
+
+                // Initialisation
+                onMounted(async () => {
+                    await loadDatabase();
+                    trackInteraction('app_loaded');
+                    console.log('App mounted, database loaded, timers initialized');
+                    
+                    // Vérifier les mises à jour toutes les 30 secondes
+                    setInterval(async () => {
+                        if (currentStep.value === 'welcome' || currentStep.value === 'results') {
+                            const hasUpdate = await checkForUpdates();
+                            if (hasUpdate) {
+                                console.log('🔄 Mise à jour disponible, suggestion de rechargement...');
+                                // Au lieu de recharger automatiquement, proposer à l'utilisateur
+                                if (confirm('Une mise à jour des données est disponible. Voulez-vous recharger ?')) {
+                                    await loadDatabase();
+                                    showNotification('Données mises à jour !', 'success');
+                                }
+                            }
+                        }
+                    }, 30000);
+                });
+
+                // Fonction pour afficher les notifications
+                const showNotification = (message, type = 'info') => {
+                    const notification = document.createElement('div');
+                    const bgColor = type === 'success' ? 'bg-green-500' : 
+                                   type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+                    notification.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ' + bgColor;
+                    notification.textContent = message;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 5000);
+                };
+
+                return {
+                    currentStep,
+                    currentQuestion,
+                    breadcrumbPath,
+                    recommendedProducts,
+                    showProductOverlay,
+                    selectedProduct,
+                    showInactivityWarning,
+                    countdown,
+                    isLoading,
+                    loadError,
+                    startQuestionnaire,
+                    answerQuestion,
+                    goToStep,
+                    showProductDetails,
+                    closeProductOverlay,
+                    restart,
+                    extendSession,
+                    autoRestart,
+                    loadDatabase,
+                    checkForUpdates,
+                    showNotification,
+                    interactions
+                };
+            },
+            template: `
+                <div class="min-h-screen">
+                    <!-- En-tête -->
+                    <header class="bg-white/80 backdrop-blur-sm shadow-sm border-b border-pink-100">
+                        <div class="max-w-4xl mx-auto px-4 py-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-2xl">👶</span>
+                                </div>
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-800">Guide Lait Maternel</h1>
+                                    <p class="text-sm text-gray-600">Assistant personnel pour jeunes mamans</p>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Fil d'Ariane -->
+                    <nav v-if="currentStep === 'questionnaire'" class="bg-white/60 backdrop-blur-sm py-3 border-b border-pink-50">
+                        <div class="max-w-4xl mx-auto px-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <button 
+                                    v-for="(step, index) in breadcrumbPath" 
+                                    :key="step.id"
+                                    @click="goToStep(step.id)"
+                                    :class="[
+                                        'px-3 py-1.5 rounded-full transition-all duration-200',
+                                        step.isActive 
+                                            ? 'bg-pink-500 text-white shadow-sm' 
+                                            : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+                                    ]"
+                                >
+                                    {{ step.title }}
+                                </button>
+                                <span v-if="index < breadcrumbPath.length - 1" class="text-pink-300">→</span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <!-- Contenu principal -->
+                    <main class="max-w-4xl mx-auto px-4 py-8">
+                        <!-- Écran de chargement -->
+                        <div v-if="isLoading" class="text-center">
+                            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 border border-pink-100">
+                                <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-spin">
+                                    <span class="text-white text-2xl">⏳</span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">Chargement en cours...</h2>
+                                <p class="text-gray-600">Préparation de votre assistant personnalisé</p>
+                            </div>
+                        </div>
+
+                        <!-- Erreur de chargement -->
+                        <div v-else-if="loadError" class="text-center">
+                            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 border border-red-200">
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <span class="text-white text-2xl">⚠️</span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">Problème de connexion</h2>
+                                <p class="text-gray-600 mb-6">{{ loadError }}</p>
+                                <p class="text-sm text-gray-500 mb-6">Nous utilisons des données de secours pour continuer.</p>
+                                <button 
+                                    @click="loadDatabase(true)"
+                                    class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mr-4"
+                                >
+                                    🔄 Recharger depuis le serveur
+                                </button>
+                                <button 
+                                    @click="currentStep = 'welcome'; loadError = null"
+                                    class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                                >
+                                    ✨ Continuer quand même
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Page d'accueil -->
+                        <div v-else-if="currentStep === 'welcome'" class="text-center">
+                            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 border border-pink-100">
+                                <div class="mb-8">
+                                    <div class="w-24 h-24 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <span class="text-white text-4xl">🤱</span>
+                                    </div>
+                                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Bienvenue dans votre guide personnalisé</h2>
+                                    <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                                        Nous allons vous accompagner pour trouver le lait maternel le mieux adapté aux besoins de votre bébé. 
+                                        Quelques questions simples nous permettront de vous proposer les meilleures options.
+                                    </p>
+                                </div>
+                                
+                                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                                    <div class="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-6">
+                                        <div class="text-3xl mb-3">🔍</div>
+                                        <h3 class="font-semibold text-gray-800 mb-2">Personnalisé</h3>
+                                        <p class="text-sm text-gray-600">Des recommandations adaptées à votre bébé</p>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6">
+                                        <div class="text-3xl mb-3">⚕️</div>
+                                        <h3 class="font-semibold text-gray-800 mb-2">Médical</h3>
+                                        <p class="text-sm text-gray-600">Basé sur des critères pharmaceutiques</p>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                                        <div class="text-3xl mb-3">💝</div>
+                                        <h3 class="font-semibold text-gray-800 mb-2">Bienveillant</h3>
+                                        <p class="text-sm text-gray-600">Un accompagnement doux et rassurant</p>
+                                    </div>
+                                </div>
+
+                                <button 
+                                    @click="startQuestionnaire"
+                                    class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                                >
+                                    Commencer le questionnaire ✨
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Questionnaire -->
+                        <div v-else-if="currentStep === 'questionnaire' && currentQuestion" class="max-w-2xl mx-auto">
+                            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-pink-100">
+                                <div class="text-center mb-8">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-white text-2xl">❓</span>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ currentQuestion.title }}</h3>
+                                    <p class="text-lg text-gray-600">{{ currentQuestion.question }}</p>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <button
+                                        v-for="option in currentQuestion.options"
+                                        :key="option.value"
+                                        @click="answerQuestion(currentQuestion.id, option)"
+                                        class="w-full p-6 bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl border-2 border-pink-100 hover:border-pink-300 hover:shadow-md transition-all duration-200 text-left group"
+                                    >
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-gray-800 font-medium">{{ option.label }}</span>
+                                            <span class="text-pink-400 group-hover:text-pink-600 transition-colors">→</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Résultats -->
+                        <div v-else-if="currentStep === 'results'" class="max-w-4xl mx-auto">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white text-3xl">🎯</span>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-2">Nos recommandations pour vous</h2>
+                                <p class="text-lg text-gray-600">Voici les laits maternels les mieux adaptés aux besoins de votre bébé</p>
+                            </div>
+
+                            <div v-if="recommendedProducts.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                                <div
+                                    v-for="product in recommendedProducts"
+                                    :key="product.id"
+                                    @click="showProductDetails(product)"
+                                    class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-pink-100 p-6 cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                                >
+                                    <div class="text-center mb-4">
+                                        <div class="text-4xl mb-2">{{ product.image }}</div>
+                                        <h3 class="font-bold text-gray-800 mb-1">{{ product.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-2">{{ product.category }}</p>
+                                        <div class="text-sm bg-pink-100 text-pink-700 px-3 py-1 rounded-full inline-block">
+                                            {{ product.age }}
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-sm text-gray-600 mb-4">{{ product.description }}</p>
+                                    
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-green-600">{{ product.price }}</span>
+                                        <span class="text-pink-500 text-sm">Voir détails →</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-else class="text-center py-12">
+                                <div class="text-6xl mb-4">🤔</div>
+                                <h3 class="text-xl font-semibold text-gray-700 mb-2">Aucun produit trouvé</h3>
+                                <p class="text-gray-600 mb-6">Nous vous recommandons de consulter votre pédiatre pour des conseils personnalisés.</p>
+                            </div>
+
+                            <div class="text-center">
+                                <button 
+                                    @click="restart"
+                                    class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                                >
+                                    Recommencer le questionnaire
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- Overlay d'avertissement d'inactivité -->
+                    <div v-if="showInactivityWarning" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <span class="text-white text-2xl">⏰</span>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">Session bientôt expirée</h3>
+                            <p class="text-gray-600 mb-6">
+                                Votre session va expirer dans <span class="font-bold text-red-600 text-xl">{{ countdown }}</span> secondes.
+                                Souhaitez-vous prolonger de 1 minute ?
+                            </p>
+                            
+                            <div class="space-y-3">
+                                <button 
+                                    @click="extendSession"
+                                    class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                                >
+                                    ✨ Oui, prolonger d'1 minute
+                                </button>
+                                
+                                <button 
+                                    @click="autoRestart"
+                                    class="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                                >
+                                    🔄 Recommencer maintenant
+                                </button>
+                            </div>
+                            
+                            <p class="text-xs text-gray-500 mt-4">
+                                Cette fonction aide à préserver votre confidentialité
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Overlay produit -->
+                    <div v-if="showProductOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click="closeProductOverlay">
+                        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" @click.stop>
+                            <div class="p-8">
+                                <div class="flex justify-between items-start mb-6">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="text-5xl">{{ selectedProduct.image || '📦' }}</div>
+                                        <div>
+                                            <h3 class="text-2xl font-bold text-gray-800">{{ selectedProduct.nom || selectedProduct.name || 'Produit' }}</h3>
+                                            <p class="text-gray-600">{{ selectedProduct.informations_generales?.presentation || selectedProduct.category || 'Lait infantile' }}</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        @click="closeProductOverlay"
+                                        class="text-gray-400 hover:text-gray-600 text-2xl"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div v-if="selectedProduct.informations_generales?.indications">
+                                        <h4 class="font-semibold text-gray-800 mb-2">Indications</h4>
+                                        <p class="text-gray-600">{{ selectedProduct.informations_generales.indications }}</p>
+                                    </div>
+
+                                    <div v-if="selectedProduct.informations_generales?.caracteristiques">
+                                        <h4 class="font-semibold text-gray-800 mb-2">Caractéristiques</h4>
+                                        <p class="text-gray-600">{{ selectedProduct.informations_generales.caracteristiques }}</p>
+                                    </div>
+
+                                    <div v-if="selectedProduct.ingredients && selectedProduct.ingredients.length > 0">
+                                        <h4 class="font-semibold text-gray-800 mb-3">Ingrédients principaux</h4>
+                                        <div class="grid gap-2">
+                                            <div v-for="ingredient in selectedProduct.ingredients.slice(0, 8)" :key="ingredient" class="flex items-center space-x-2">
+                                                <span class="text-green-500">•</span>
+                                                <span class="text-gray-700">{{ ingredient }}</span>
+                                            </div>
+                                            <div v-if="selectedProduct.ingredients.length > 8" class="text-sm text-gray-500">
+                                                ... et {{ selectedProduct.ingredients.length - 8 }} autres ingrédients
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div v-if="selectedProduct.informations_generales?.mode_emploi">
+                                        <h4 class="font-semibold text-gray-800 mb-2">Mode d'emploi</h4>
+                                        <p class="text-gray-600">{{ selectedProduct.informations_generales.mode_emploi }}</p>
+                                    </div>
+
+                                    <div v-if="selectedProduct.informations_generales?.conservation">
+                                        <h4 class="font-semibold text-gray-800 mb-2">Conservation</h4>
+                                        <p class="text-gray-600">{{ selectedProduct.informations_generales.conservation }}</p>
+                                    </div>
+
+                                    <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6">
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div v-if="selectedProduct.informations_generales?.fabricant">
+                                                <p class="text-sm text-gray-600">Fabricant</p>
+                                                <p class="font-semibold text-gray-800">{{ selectedProduct.informations_generales.fabricant }}</p>
+                                            </div>
+                                            <div v-if="selectedProduct.informations_generales?.lieux_vente">
+                                                <p class="text-sm text-gray-600">Disponible en</p>
+                                                <p class="font-semibold text-gray-800">{{ selectedProduct.informations_generales.lieux_vente }}</p>
+                                            </div>
+                                            <div v-if="selectedProduct.informations_generales?.pourcentage_reconstitution">
+                                                <p class="text-sm text-gray-600">Reconstitution</p>
+                                                <p class="font-semibold text-gray-800">{{ selectedProduct.informations_generales.pourcentage_reconstitution }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div v-if="selectedProduct.informations_generales?.contre_indications" class="bg-orange-50 border-l-4 border-orange-400 p-4 rounded">
+                                        <h4 class="font-semibold text-orange-800 mb-2">⚠️ Contre-indications</h4>
+                                        <p class="text-sm text-orange-700">{{ selectedProduct.informations_generales.contre_indications }}</p>
+                                    </div>
+
+                                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                                        <p class="text-sm text-yellow-800">
+                                            <strong>Important :</strong> Ces informations sont fournies à titre indicatif. 
+                                            Consultez toujours votre pédiatre avant de changer l'alimentation de votre bébé.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer class="bg-white/60 backdrop-blur-sm border-t border-pink-100 mt-12">
+                        <div class="max-w-4xl mx-auto px-4 py-6">
+                            <div class="text-center text-sm text-gray-600">
+                                <p class="mb-2">💝 Conçu avec amour pour accompagner les jeunes mamans</p>
+                                <p>Consultez toujours votre professionnel de santé pour des conseils personnalisés</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            `
+        }).mount('#app');
+    </script>
+</body>
+</html>

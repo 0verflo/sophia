@@ -1,0 +1,277 @@
+{
+  "version": "2.0.0",
+  "lastUpdated": "2025-07-28T16:00:00.000Z",
+  "questions": {
+    "q1": {
+      "id": "q1",
+      "title": "Âge de votre bébé",
+      "question": "Quel âge a votre bébé ?",
+      "options": [
+        { "value": "0-6months", "label": "0-6 mois", "next": "q2" },
+        { "value": "6-12months", "label": "6-12 mois", "next": "q3" },
+        { "value": "12+months", "label": "12+ mois", "next": "q4" }
+      ]
+    },
+    "q2": {
+      "id": "q2",
+      "title": "Besoins spécifiques (0-6 mois)",
+      "question": "Votre bébé a-t-il des besoins particuliers ?",
+      "options": [
+        { "value": "premature", "label": "Bébé prématuré", "next": "q5" },
+        { "value": "allergies", "label": "Risque d'allergies", "next": "q6" },
+        { "value": "digestive", "label": "Problèmes digestifs", "next": "q7" },
+        { "value": "normal", "label": "Développement normal", "next": "results" }
+      ]
+    },
+    "q3": {
+      "id": "q3",
+      "title": "Transition alimentaire (6-12 mois)",
+      "question": "Comment se passe la diversification alimentaire ?",
+      "options": [
+        { "value": "easy", "label": "Très bien acceptée", "next": "q8" },
+        { "value": "difficult", "label": "Difficultés d'adaptation", "next": "q9" },
+        { "value": "mixed", "label": "Partiellement acceptée", "next": "results" }
+      ]
+    },
+    "q4": {
+      "id": "q4",
+      "title": "Lait de croissance (12+ mois)",
+      "question": "Souhaitez-vous continuer avec un lait spécialisé ?",
+      "options": [
+        { "value": "yes", "label": "Oui, lait de croissance", "next": "results" },
+        { "value": "cow", "label": "Transition vers lait de vache", "next": "results" }
+      ]
+    },
+    "q5": {
+      "id": "q5",
+      "title": "Prématurité",
+      "question": "À combien de semaines votre bébé est-il né ?",
+      "options": [
+        { "value": "very-early", "label": "Moins de 32 semaines", "next": "results" },
+        { "value": "moderate", "label": "32-37 semaines", "next": "results" }
+      ]
+    },
+    "q6": {
+      "id": "q6",
+      "title": "Allergies",
+      "question": "Quel type d'allergie suspectez-vous ?",
+      "options": [
+        { "value": "milk-protein", "label": "Protéines de lait de vache", "next": "results" },
+        { "value": "lactose", "label": "Intolérance au lactose", "next": "results" },
+        { "value": "multiple", "label": "Allergies multiples", "next": "results" }
+      ]
+    },
+    "q7": {
+      "id": "q7",
+      "title": "Problèmes digestifs",
+      "question": "Quels sont les symptômes observés ?",
+      "options": [
+        { "value": "reflux", "label": "Reflux gastro-œsophagien", "next": "results" },
+        { "value": "colic", "label": "Coliques importantes", "next": "results" },
+        { "value": "constipation", "label": "Constipation", "next": "results" }
+      ]
+    },
+    "q8": {
+      "id": "q8",
+      "title": "Appétit (6-12 mois)",
+      "question": "Comment est l'appétit de votre bébé ?",
+      "options": [
+        { "value": "good", "label": "Bon appétit", "next": "results" },
+        { "value": "variable", "label": "Appétit variable", "next": "results" }
+      ]
+    },
+    "q9": {
+      "id": "q9",
+      "title": "Support diversification",
+      "question": "Avez-vous besoin d'un soutien nutritionnel renforcé ?",
+      "options": [
+        { "value": "yes", "label": "Oui, formule enrichie", "next": "results" },
+        { "value": "gentle", "label": "Formule douce", "next": "results" }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "aptamil-pronutra-1",
+      "nom": "Aptamil Pronutra 1",
+      "informations_generales": {
+        "indications": "Lait infantile 1er âge destiné aux nourrissons de 0 à 6 mois lorsque l'allaitement maternel n'est pas possible ou insuffisant.",
+        "contre_indications": "Ne convient pas aux enfants allergiques aux protéines de lait de vache. Consulter un professionnel de santé en cas de doute.",
+        "caracteristiques": "Formule enrichie en prébiotiques GOS/FOS, DHA et ARA pour le développement cérébral et visuel.",
+        "bibliographie": "Études cliniques sur les bénéfices des prébiotiques chez le nourrisson (Journal of Pediatric Nutrition, 2024).",
+        "presentation": "Boîte de 800g de poudre à reconstituer.",
+        "mode_emploi": "Diluer 1 mesure rase (4,6g) dans 30ml d'eau tiède. Bien mélanger. Consommer immédiatement.",
+        "recommandations_precautions": "Respecter les dosages. Utiliser une eau adaptée aux nourrissons. Ne pas réchauffer au micro-ondes.",
+        "conservation": "À conserver dans un endroit sec et frais, à l'abri de la lumière. Consommer dans les 3 semaines après ouverture.",
+        "pourcentage_reconstitution": "13% (1 mesure pour 30ml d'eau)",
+        "lieux_vente": "Pharmacies, parapharmacies, grandes surfaces (rayon bébé)",
+        "fabricant": "Danone Nutricia"
+      },
+      "ingredients": [
+        "Lactose",
+        "Huiles végétales",
+        "Protéines de lactosérum",
+        "Galacto-oligosaccharides",
+        "Fructo-oligosaccharides",
+        "DHA",
+        "ARA",
+        "Vitamines A, C, D, E",
+        "Fer",
+        "Calcium"
+      ],
+      "categorisation": ["0-6months", "normal", "easy"],
+      "image": "👶"
+    },
+    {
+      "id": "guigoz-evolia-1",
+      "nom": "Guigoz Evolia 1",
+      "informations_generales": {
+        "indications": "Lait infantile 1er âge avec probiotiques naturels pour favoriser l'équilibre de la flore intestinale.",
+        "contre_indications": "Déconseillé en cas d'allergie aux protéines de lait de vache ou de galactosémie.",
+        "caracteristiques": "Contient le probiotique BL999, des oméga 3 et 6, du fer et des vitamines essentielles.",
+        "bibliographie": "Recherches sur les probiotiques BL999 (International Journal of Probiotics, 2023).",
+        "presentation": "Boîte métallique de 900g.",
+        "mode_emploi": "1 mesure (4,5g) pour 30ml d'eau. Température de l'eau : 40°C maximum.",
+        "recommandations_precautions": "Préparer le biberon juste avant le repas. Ne pas conserver un biberon entamé.",
+        "conservation": "Conserver au sec, entre 15 et 25°C. Refermer hermétiquement après usage.",
+        "pourcentage_reconstitution": "15% (1 mesure pour 30ml d'eau)",
+        "lieux_vente": "Pharmacies, magasins spécialisés bébé",
+        "fabricant": "Nestlé Health Science"
+      },
+      "ingredients": [
+        "Lait écrémé",
+        "Lactose",
+        "Huile de palme",
+        "Probiotique BL999",
+        "Oméga 3",
+        "Oméga 6",
+        "Fer",
+        "Vitamines B1, B2, B6, B12",
+        "Acide folique",
+        "Taurine"
+      ],
+      "categorisation": ["0-6months", "normal", "digestive", "colic"],
+      "image": "🍼"
+    },
+    {
+      "id": "picot-pepti-junior",
+      "nom": "Picot Pepti-Junior",
+      "informations_generales": {
+        "indications": "Aliment diététique destiné à des fins médicales spéciales pour la prise en charge du risque allergique.",
+        "contre_indications": "Ne pas utiliser en cas d'allergie sévère confirmée sans avis médical.",
+        "caracteristiques": "Protéines partiellement hydrolysées pour réduire le potentiel allergisant.",
+        "bibliographie": "Études sur l'efficacité des protéines hydrolysées (Allergy & Clinical Immunology, 2024).",
+        "presentation": "Boîte de 750g avec mesurette incluse.",
+        "mode_emploi": "1 mesure rase (4,8g) dans 30ml d'eau. Température recommandée : 50°C.",
+        "recommandations_precautions": "Utilisation sous contrôle médical. Introduction progressive recommandée.",
+        "conservation": "À l'abri de l'humidité et de la chaleur. Consommer dans le mois suivant l'ouverture.",
+        "pourcentage_reconstitution": "16% (1 mesure pour 30ml d'eau)",
+        "lieux_vente": "Pharmacies uniquement",
+        "fabricant": "Picot Nutrition Médicale"
+      },
+      "ingredients": [
+        "Protéines de lactosérum partiellement hydrolysées",
+        "Maltodextrine",
+        "Huiles végétales",
+        "Amidon modifié",
+        "Minéraux",
+        "Vitamines",
+        "L-carnitine",
+        "Choline",
+        "Inositol"
+      ],
+      "categorisation": ["0-12months", "allergies", "milk-protein", "multiple"],
+      "image": "🛡️"
+    },
+    {
+      "id": "nutrilon-ar",
+      "nom": "Nutrilon AR",
+      "informations_generales": {
+        "indications": "Aliment diététique pour nourrissons souffrant de régurgitations et reflux gastro-œsophagiens.",
+        "contre_indications": "Déconseillé en cas d'obstruction intestinale ou de troubles de la déglutition.",
+        "caracteristiques": "Formule épaissie naturellement avec de l'amidon pour réduire les régurgitations.",
+        "bibliographie": "Efficacité clinique des laits AR (Pediatric Gastroenterology Review, 2023).",
+        "presentation": "Conditionnement de 800g en poudre.",
+        "mode_emploi": "1 mesure (4,7g) pour 30ml d'eau tiède. Mélanger vigoureusement.",
+        "recommandations_precautions": "Augmenter progressivement la consistance. Surveiller la prise de poids.",
+        "conservation": "Lieu sec et tempéré. Fermer soigneusement après chaque utilisation.",
+        "pourcentage_reconstitution": "15,6% (1 mesure pour 30ml d'eau)",
+        "lieux_vente": "Pharmacies et parapharmacies",
+        "fabricant": "Danone Nutricia"
+      },
+      "ingredients": [
+        "Lait écrémé",
+        "Amidon de pomme de terre",
+        "Lactose",
+        "Huiles végétales",
+        "Protéines de lactosérum",
+        "Galacto-oligosaccharides",
+        "Fer",
+        "Zinc",
+        "Vitamines A, D, E, K"
+      ],
+      "categorisation": ["0-12months", "reflux", "digestive"],
+      "image": "🌊"
+    },
+    {
+      "id": "modilac-premature",
+      "nom": "Modilac Prématuré",
+      "informations_generales": {
+        "indications": "Aliment diététique spécialement formulé pour répondre aux besoins nutritionnels des bébés prématurés.",
+        "contre_indications": "Utilisation exclusivement sous surveillance médicale en milieu hospitalier.",
+        "caracteristiques": "Haute densité énergétique, enrichi en protéines, DHA et ARA renforcés pour le développement.",
+        "bibliographie": "Guidelines ESPGHAN pour la nutrition des prématurés (2024).",
+        "presentation": "Boîte de 400g spécialement adaptée aux besoins hospitaliers.",
+        "mode_emploi": "Dosage personnalisé selon l'âge gestationnel et le poids. Préparation selon protocole médical.",
+        "recommandations_precautions": "Usage strictement médical. Transition progressive vers lait standard selon évolution.",
+        "conservation": "Conditions pharmaceutiques. Respecter la chaîne du froid si nécessaire.",
+        "pourcentage_reconstitution": "Variable selon prescription (18-20%)",
+        "lieux_vente": "Milieu hospitalier, pharmacies sur prescription",
+        "fabricant": "Modilac Laboratories"
+      },
+      "ingredients": [
+        "Protéines de lactosérum enrichies",
+        "Triglycérides à chaîne moyenne",
+        "DHA concentré",
+        "ARA",
+        "Lactose adapté",
+        "Vitamines renforcées",
+        "Minéraux adaptés",
+        "Nucléotides",
+        "Probiotiques spécifiques"
+      ],
+      "categorisation": ["premature", "very-early", "moderate"],
+      "image": "💜"
+    },
+    {
+      "id": "bledina-croissance",
+      "nom": "Blédina Croissance",
+      "informations_generales": {
+        "indications": "Lait de croissance pour enfants de 12 mois à 3 ans dans le cadre d'une alimentation diversifiée.",
+        "contre_indications": "Ne convient pas aux enfants de moins de 12 mois.",
+        "caracteristiques": "Riche en fer pour prévenir les carences, vitamines C et D, calcium renforcé pour la croissance.",
+        "bibliographie": "Besoins nutritionnels de l'enfant en bas âge (Nutrition Pédiatrique, 2024).",
+        "presentation": "Brique UHT de 1L prête à l'emploi ou poudre 900g.",
+        "mode_emploi": "Liquide : servir à température ambiante ou légèrement tiédi. Poudre : selon dosage indiqué.",
+        "recommandations_precautions": "Complément d'une alimentation diversifiée. Maximum 500ml par jour.",
+        "conservation": "UHT : avant ouverture à température ambiante, après ouverture 48h au réfrigérateur.",
+        "pourcentage_reconstitution": "12% pour la version poudre",
+        "lieux_vente": "Grandes surfaces, pharmacies, magasins bio",
+        "fabricant": "Blédina (Danone)"
+      },
+      "ingredients": [
+        "Lait demi-écrémé",
+        "Lactose",
+        "Fer",
+        "Vitamines C, D, E",
+        "Calcium",
+        "Phosphore",
+        "Magnésium",
+        "Zinc",
+        "Vitamines du groupe B"
+      ],
+      "categorisation": ["12+months", "yes", "good"],
+      "image": "🌱"
+    }
+  ]
+}

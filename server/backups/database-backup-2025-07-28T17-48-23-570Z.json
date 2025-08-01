@@ -1,0 +1,307 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-28T17:47:42.639Z",
+  "questions": {
+    "q1": {
+      "id": "q1",
+      "title": "Âge de votre bébé",
+      "question": "Quel âge a votre bébé ?",
+      "options": [
+        {
+          "value": "0-6months",
+          "label": "0-6 mois",
+          "next": "q2"
+        },
+        {
+          "value": "6-12months",
+          "label": "6-12 mois",
+          "next": "q3"
+        },
+        {
+          "value": "12+months",
+          "label": "12+ mois",
+          "next": "q4"
+        }
+      ]
+    },
+    "q2": {
+      "id": "q2",
+      "title": "Besoins spécifiques (0-6 mois)",
+      "question": "Votre bébé a-t-il des besoins particuliers ?",
+      "options": [
+        {
+          "value": "premature",
+          "label": "Bébé prématuré",
+          "next": "q5"
+        },
+        {
+          "value": "allergies",
+          "label": "Risque d'allergies",
+          "next": "q6"
+        },
+        {
+          "value": "digestive",
+          "label": "Problèmes digestifs",
+          "next": "q7"
+        },
+        {
+          "value": "normal",
+          "label": "Développement normal",
+          "next": "results"
+        }
+      ]
+    },
+    "q3": {
+      "id": "q3",
+      "title": "Transition alimentaire (6-12 mois)",
+      "question": "Comment se passe la diversification alimentaire ?",
+      "options": [
+        {
+          "value": "easy",
+          "label": "Très bien acceptée",
+          "next": "q8"
+        },
+        {
+          "value": "difficult",
+          "label": "Difficultés d'adaptation",
+          "next": "q9"
+        },
+        {
+          "value": "mixed",
+          "label": "Partiellement acceptée",
+          "next": "results"
+        }
+      ]
+    },
+    "q4": {
+      "id": "q4",
+      "title": "Lait de croissance (12+ mois)",
+      "question": "Souhaitez-vous continuer avec un lait spécialisé ?",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui, lait de croissance",
+          "next": "results"
+        },
+        {
+          "value": "cow",
+          "label": "Transition vers lait de vache",
+          "next": "results"
+        }
+      ]
+    },
+    "q5": {
+      "id": "q5",
+      "title": "Prématurité",
+      "question": "À combien de semaines votre bébé est-il né ?",
+      "options": [
+        {
+          "value": "very-early",
+          "label": "Moins de 32 semaines",
+          "next": "results"
+        },
+        {
+          "value": "moderate",
+          "label": "32-37 semaines",
+          "next": "results"
+        }
+      ]
+    },
+    "q6": {
+      "id": "q6",
+      "title": "Allergies",
+      "question": "Quel type d'allergie suspectez-vous ?",
+      "options": [
+        {
+          "value": "milk-protein",
+          "label": "Protéines de lait de vache",
+          "next": "results"
+        },
+        {
+          "value": "lactose",
+          "label": "Intolérance au lactose",
+          "next": "results"
+        },
+        {
+          "value": "multiple",
+          "label": "Allergies multiples",
+          "next": "results"
+        }
+      ]
+    },
+    "q7": {
+      "id": "q7",
+      "title": "Problèmes digestifs",
+      "question": "Quels sont les symptômes observés ?",
+      "options": [
+        {
+          "value": "reflux",
+          "label": "Reflux gastro-œsophagien",
+          "next": "results"
+        },
+        {
+          "value": "colic",
+          "label": "Coliques importantes",
+          "next": "results"
+        },
+        {
+          "value": "constipation",
+          "label": "Constipation",
+          "next": "results"
+        }
+      ]
+    },
+    "q8": {
+      "id": "q8",
+      "title": "Appétit (6-12 mois)",
+      "question": "Comment est l'appétit de votre bébé ?",
+      "options": [
+        {
+          "value": "good",
+          "label": "Bon appétit",
+          "next": "results"
+        },
+        {
+          "value": "variable",
+          "label": "Appétit variable",
+          "next": "results"
+        }
+      ]
+    },
+    "q9": {
+      "id": "q9",
+      "title": "Support diversification",
+      "question": "Avez-vous besoin d'un soutien nutritionnel renforcé ?",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui, formule enrichie",
+          "next": "results"
+        },
+        {
+          "value": "gentle",
+          "label": "Formule douce",
+          "next": "results"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "aptamil-pronutra-1",
+      "name": "Aptamil Pronutra 1",
+      "category": "Lait 1er âge",
+      "age": "0-6 mois",
+      "description": "Lait infantile 1er âge avec prébiotiques",
+      "features": [
+        "Prébiotiques GOS/FOS",
+        "DHA et ARA",
+        "Nucléotides",
+        "Sans huile de palme"
+      ],
+      "indications": [
+        "normal",
+        "easy"
+      ],
+      "price": "15.90€",
+      "image": "👶",
+      "details": "Formule complète inspirée du lait maternel avec des prébiotiques pour soutenir le développement du système immunitaire."
+    },
+    {
+      "id": "guigoz-evolia-1",
+      "name": "Guigoz Evolia 1",
+      "category": "Lait 1er âge",
+      "age": "0-6 mois",
+      "description": "Lait infantile avec probiotiques naturels",
+      "features": [
+        "Probiotiques BL999",
+        "Oméga 3 et 6",
+        "Fer et vitamines"
+      ],
+      "indications": [
+        "normal",
+        "digestive"
+      ],
+      "price": "14.50€",
+      "image": "🍼",
+      "details": "Enrichi en probiotiques naturels pour favoriser l'équilibre de la flore intestinale de bébé."
+    },
+    {
+      "id": "picot-pepti-junior",
+      "name": "Picot Pepti-Junior",
+      "category": "Lait hypoallergénique",
+      "age": "0-12 mois",
+      "description": "Lait à protéines partiellement hydrolysées",
+      "features": [
+        "Protéines hydrolysées",
+        "Réduit les risques allergiques",
+        "Facile à digérer"
+      ],
+      "indications": [
+        "allergies",
+        "milk-protein"
+      ],
+      "price": "18.90€",
+      "image": "🛡️",
+      "details": "Spécialement formulé pour réduire le risque de développement d'allergies aux protéines de lait de vache."
+    },
+    {
+      "id": "nutrilon-ar",
+      "name": "Nutrilon AR",
+      "category": "Lait anti-reflux",
+      "age": "0-12 mois",
+      "description": "Lait épaissi pour réduire les reflux",
+      "features": [
+        "Formule épaissie",
+        "Réduit les régurgitations",
+        "Enrichi en fer"
+      ],
+      "indications": [
+        "reflux",
+        "digestive"
+      ],
+      "price": "17.20€",
+      "image": "🌊",
+      "details": "Lait infantile épaissi naturellement pour réduire les régurgitations et améliorer le confort digestif."
+    },
+    {
+      "id": "modilac-premature",
+      "name": "Modilac Prématuré",
+      "category": "Lait prématuré",
+      "age": "0-12 mois",
+      "description": "Lait spécialement adapté aux prématurés",
+      "features": [
+        "Enrichi en protéines",
+        "Haute densité énergétique",
+        "DHA et ARA renforcés"
+      ],
+      "indications": [
+        "premature",
+        "very-early",
+        "moderate"
+      ],
+      "price": "22.50€",
+      "image": "💜",
+      "details": "Formule spécialement conçue pour répondre aux besoins nutritionnels spécifiques des bébés prématurés."
+    },
+    {
+      "id": "bledina-croissance",
+      "name": "Blédina Croissance",
+      "category": "Lait de croissance",
+      "age": "12+ mois",
+      "description": "Lait de croissance enrichi en fer",
+      "features": [
+        "Riche en fer",
+        "Vitamines C et D",
+        "Calcium renforcé"
+      ],
+      "indications": [
+        "yes",
+        "good"
+      ],
+      "price": "13.80€",
+      "image": "🌱",
+      "details": "Lait de croissance adapté aux besoins nutritionnels des tout-petits de 12 mois à 3 ans."
+    }
+  ]
+}
